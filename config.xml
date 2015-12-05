@@ -1,0 +1,9 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+    <appender name="Padosi" class="LoggerAppenderFile">
+        <param name="file" value="Padosi.log" />
+    </appender>
+    <root>
+        <level value="info" />
+        <appender_ref ref="Padosi" />
+    </root>
+</configuration>
