@@ -1,11 +1,114 @@
-INFO - Storing the session variable 'phoneNum' 
-ERROR - Error!: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
-<br/>
-INFO - Storing the session variable 'phoneNum' 
+INFO - Storing the session variable 'user' 
 INFO - Connection is established with the database.
-INFO - Storing the session variable 'phoneNum' 
+INFO - Check if the feedid 1 is of the previous block/neighbourhood for the user mohit
+INFO - The feed 1 of the user mohit belongs to the previous block/hood : 1
+INFO - Check if the feedauthor of the feed 1has changed.
+INFO - Feedauthor changed location : 
+INFO - Storing the session variable 'user' 
 INFO - Connection is established with the database.
-INFO - Storing the session variable 'phoneNum' 
+INFO - Check if the feedid 1 is of the previous block/neighbourhood for the user mohit
+INFO - The feed 1 of the user mohit belongs to the previous block/hood : 1
+INFO - Check if the feedauthor of the feed 1 has changed.
+INFO - Feedauthor changed location : 0
+INFO - Storing the session variable 'user' 
 INFO - Connection is established with the database.
-INFO - Storing the session variable 'phoneNum' 
+INFO - Check if the feedid 1 is of the previous block/neighbourhood for the user mohit
+INFO - The feed 1 of the user mohit belongs to the previous block/hood : 1
+INFO - Check if the feedauthor of the feed 1 has changed.
+INFO - 
+INFO - Storing the session variable 'user' 
 INFO - Connection is established with the database.
+INFO - Check if the feedid 1 is of the previous block/neighbourhood for the user mohit
+INFO - The feed 1 of the user mohit belongs to the previous block/hood : 1
+INFO - Check if the feedauthor of the feed 1 has changed.
+INFO - Feedauthor changed location : 
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.
+INFO - Storing the session variable 'user' 
+INFO - Connection is established with the database.
+INFO - Get the feeds of the current block/neighbourhood with unread messages.

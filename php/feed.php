@@ -8,13 +8,12 @@ Logger::configure('..\config.xml');
 // Fetch a logger, it will inherit settings from the root logger
 $log = Logger::getLogger('Padosi');
 
-$selected=array();
-//$selected = $_POST["selected"]; //pulls value of radio button
-echo "Padosi";
-
-
-//$username = $_GET["username"]; //pulls value of radio button
+//$user = $_GET["user"]; //pulls value of radio button
 //$typeOfFeed = $_GET["typeOfFeed"]; //pulls value of radio button
+$user = "sanjitha";
+$typeOfFeed = "block";
+$columns = array('feedId','feedSubject','feedAuthor','feedText');
+$action = 'unread';
 
 $servername = 'localhost';
 $username = 'root';
@@ -22,35 +21,79 @@ $password = '';
 
 //session_start();
 //$_SESSION['username'] = $phoneNum;
-$log->info("Storing the session variable 'phoneNum' ");
+$log->info("Storing the session variable 'user' ");
 
-try {
-    $dbh = new PDO('mysql:host=localhost;port=3306;dbname=dbproject', $username, $password);
-	$log->info("Connection is established with the database.");
-  $stmt = $dbh->prepare("CALL user_count()");
-  //$value = 'hello';
-  //$stmt->bindParam(1, $value, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
+//if(isset($_GET['action']) && !empty($_GET['action'])) {
+    //$action = $_GET['action'];
+    switch($action) {
+        case 'all' : all($user,$typeOfFeed,$columns,$servername,$username,$password,$log);break;
+        case 'unread' : unread($user,$columns,$servername,$username,$password,$log);break;
+    }
+//}
 
-  // call the stored procedure
-  if($stmt->execute()) {
-  		$results = $stmt->fetchAll();
-  		foreach ($results as $row ) {
-  			 echo $row['count(*)'];
-  		}
-  	}
-  	else {
-  		$log->info("No Users");
-  		echo "No USers";
-  	}
+function all($user,$typeOfFeed,$columns,$servername,$username,$password,$log) {
+  try {
+          $dbh = new PDO('mysql:host=localhost;port=3306;dbname=dbproject', $username, $password);
+    			$log->info("Connection is established with the database.");
+  				$log->info("Get the feeds of the current block/neighbourhood based on the feed type "+$typeOfFeed);
+          $stmt= $dbh->prepare('Select * from receipient natural join feed where receiverName = ? and category = ? ;');
+  				$stmt->execute(array($user,$typeOfFeed));
+  				$isNotEmpty = $stmt->rowCount()>0;
+          if($isNotEmpty) {
+        		$results = $stmt->fetchAll();
+        		foreach ($results as $row ) {
+        			 $tmp = array();
+        			 foreach($columns as $column ) {
+        				$tmp[$column] = $row[$column];
+        			 }
+        			 $data[]=$tmp;
+        		}
+        		echo json_encode($data);
+        	}
+        	else {
+        		$log->info("No current/previous feeds.");
+        		echo "No current/previous feeds.";
+        	}
+  			$dbh = null;
+  } catch (PDOException $e) {
+      echo "Error!: " . $e->getMessage() . "<br/>";
+  	$log->error("Error!: " . $e->getMessage() . "<br/>");
+  }
 
-
-
-	$stmt = null; // doing this is mandatory for connection to get closed
-  $dbh = null;
-} catch (PDOException $e) {
-    echo "Error!: " . $e->getMessage() . "<br/>";
-	$log->error("Error!: " . $e->getMessage() . "<br/>");
 }
+
+function unread($user,$columns,$servername,$username,$password,$log) {
+  try {
+          $dbh = new PDO('mysql:host=localhost;port=3306;dbname=dbproject', $username, $password);
+          $log->info("Connection is established with the database.");
+          $log->info("Get the feeds of the current block/neighbourhood with unread messages.");
+          //$stmt= $dbh->prepare('Select * from receipient natural join feed where receiverName = ? and category = ? ;');
+          $stmt= $dbh->prepare('Select * from receipient natural join feed where receiverName = ? and feedReceiverStatus like "current" and feedId IN (select feedId from unreadmessage);');
+          $stmt->execute(array($user));
+          $isNotEmpty = $stmt->rowCount()>0;
+          if($isNotEmpty) {
+            $results = $stmt->fetchAll();
+            foreach ($results as $row ) {
+               $tmp = array();
+               foreach($columns as $column ) {
+                $tmp[$column] = $row[$column];
+               }
+               $data[]=$tmp;
+            }
+            echo json_encode($data);
+          }
+          else {
+            $log->info("No current/previous feeds.");
+            echo "No current/previous feeds.";
+          }
+        $dbh = null;
+  } catch (PDOException $e) {
+      echo "Error!: " . $e->getMessage() . "<br/>";
+    $log->error("Error!: " . $e->getMessage() . "<br/>");
+  }
+}
+
+
 
 
 
