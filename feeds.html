@@ -31,59 +31,358 @@
     <![endif]-->
     <script src="External/jquery-1.11.3.min.js"></script>
     <script src="External/jquery-1.11.3.js"></script>
-    <script src="External/bootstrap-table.min.js"></script>
+    <!--script src="External/bootstrap-table.min.js"></script-->
 		<script src="External/bootstrap-table.js"></script>
     <link rel="stylesheet" href="External/bootstrap-table.css">
     <link rel="stylesheet" href="External/bootstrap-table.min.css">
+
+  <script src="External/bootstrap.min.js"></script>
+  <script src="External/bootstrap.js"></script>
+  <!-- Style sheets -->
+  <!--link rel="stylesheet" href="External/bootstrap.min.css"-->
+    <style>
+          .displayNone {
+            display : none;
+          }
+          .maps {
+            height: 200px;
+            width: 350px;
+            margin:1%;
+            background-color: #CCC;
+          }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEu5tkfIAZi8PEuY0udKP7cRhKe2csV0s&callback=initMap"
+        async defer></script>
     <script type="text/javascript" language="javascript">
-    $(document).ready(function() {
-      $("a#neighbourhoodTable").click(function(event){
-				event.preventDefault();
-        $.ajax({
-              url: "php/feed.php",
-              data: {
-                "user": encodeURIComponent("sanjitha"),
-                "typeOfFeed": encodeURIComponent("block"),
-                "action": encodeURIComponent("all")
+    var markers = [];
+    var marker;
+    function initMap() {
+      var mapFeed = new google.maps.Map(document.getElementById('mapFeed'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 6
+      });
+      var mapMessage = new google.maps.Map(document.getElementById('mapMessage'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 6
+      });
+
+      var infoWindowFeed = new google.maps.InfoWindow({map: mapFeed});
+      var infoWindowMessage = new google.maps.InfoWindow({map: mapMessage});
+
+      // Try HTML5 geolocation.
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          infoWindowFeed.setPosition(pos);
+          infoWindowFeed.setContent('Location found.');
+          mapFeed.setCenter(pos);
+          infoWindowMessage.setPosition(pos);
+          infoWindowMessage.setContent('Location found.');
+          mapMessage.setCenter(pos);
+        }, function() {
+          handleLocationError(true, infoWindowFeed, mapFeed.getCenter());
+          handleLocationError(true, infoWindowMessage, mapMessage.getCenter());
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindowFeed, mapFeed.getCenter());
+        handleLocationError(false, infoWindowMessage, mapMessage.getCenter());
+      }
+
+      mapFeed.addListener('click', function(e) {
+        deleteMarkers();
+        placeMarkerAndPanTo(e.latLng, mapFeed);
+        updateMarkerPosition(marker.getPosition(),'input[name=feedLocation]');
+      });
+
+      mapMessage.addListener('click', function(e) {
+        deleteMarkers();
+        placeMarkerAndPanTo(e.latLng, mapMessage);
+        updateMarkerPosition(marker.getPosition(),'input[name=messageLocation]');
+      });
+
+
+
+    }
+    function updateMarkerPosition(latLng,element) {
+      $(element).val(latLng.lat().toString()+','+latLng.lng().toString());
+    }
+    function setMapOnAll(map) {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+      }
+    }
+    function clearMarkers() {
+      setMapOnAll(null);
+    }
+    function deleteMarkers() {
+      clearMarkers();
+      markers = [];
+    }
+
+    function placeMarkerAndPanTo(latLng, map) {
+      marker = new google.maps.Marker({
+        position: latLng,
+        map: map
+      });
+      map.panTo(latLng);
+      markers.push(marker);
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+    }
+    function categorySelect(elem) {
+        //document.getElementById('category').disabled = !elem.selectedIndex;
+        category = document.getElementById("selectedCategory").options[document.getElementById("selectedCategory").selectedIndex].value;
+        if(category == 'friend' || category == 'neighbour') {
+          //alert("remove");
+          $('#receiverInputDisplay').removeClass("displayNone");
+        } else {
+          if(!$('#receiverInputDisplay').hasClass("displayNone")) {
+            $('#receiverInputDisplay').addClass("displayNone");
+          }
+          $('input[name=receiver]').val("");
+        }
+
+    }
+    function expandTable($detail, response,id) {
+        buildMessages($detail.html('<table></table>').find('table'), response);
+        alert($detail);
+        $('<button  data-feed ="'+id+'" data-toggle="tooltip" data-placement="right" title="Add a new message" style="margin-top:20%;" type="button" class="btn btn-primary addMessage">Add</button>').insertAfter($detail);
+    }
+    function buildFeeds($el, response) {
+        $el.bootstrapTable({
+            data: response,
+            height: 350,
+            columns: [
+            /*{
+              field: 'feedId',
+              title: 'ID'
+            },*/
+            {
+              field: 'feedSubject',
+              title: 'Subject',
+            }, {
+              field: 'feedAuthor',
+              title: 'Author',
+            }, {
+              field: 'feedText',
+              title: 'Text'
+            } ],
+            onClickRow: function (row, $element) {
+              html = [];
+                alert("Clicked");
+                html.push('<p><b>Sanjitha:</b></p>');
+            },
+            detailView: true,
+            onExpandRow: function (index, row, $detail) {
+                alert(row["feedId"]);
+                $.ajax({
+                      url: "php/messages.php",
+                      data: {
+                        "user": encodeURIComponent("sanjitha"),
+                        "typeOfFeed": encodeURIComponent(row["feedId"])
+                      },
+                        cache: false,
+                        type: "GET",
+                        crossDomain: true,
+                        success: function(data) {
+                            alert("Messages "+JSON.parse(data));
+                            if(data == "No Messages") {
+                                alert("No Messages");
+                            }
+                            else {
+                              response = JSON.parse(data);
+                              expandTable($detail, response, row["feedId"]);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert(JSON.stringify(xhr));
+                        }
+                  });
+
+            }
+        });
+    }
+    function buildMessages($el, response) {
+        $el.bootstrapTable({
+            data: response,
+            height: 200,
+            columns: [
+            /*{
+              field: 'messageId',
+              title: 'ID'
+            }, */
+            {
+              field: 'messageAuthor',
+              title: 'Author'
+            }, {
+              field: 'messageText',
+              title: 'Text'
+            }, {
+              field: 'location',
+              title: 'Location'
+            }, {
+              field: 'messageTime',
+              title: 'Time'
+            } ]
+        });
+    }
+    function insertFeed(dataToBeSent) {
+    $.ajax({
+      url: "php/insertNewFeed.php",
+      data: dataToBeSent,
+      cache: false,
+      type: "POST",
+      async:false,
+      success: function(response) {
+          alert("Response");
+      },
+      error: function(xhr) {
+          alert(JSON.stringify(xhr));
+      }
+      });
+    }
+    function ajaxCallFeeds(category) {
+      $.ajax({
+            url: "php/feed.php",
+            data: {
+              "user": encodeURIComponent("sanjitha"),
+              "typeOfFeed": encodeURIComponent(category),
+              "action": encodeURIComponent("all")
+            },
+              cache: false,
+              type: "GET",
+              crossDomain: true,
+              success: function(data) {
+                  alert("hsgdhf"+JSON.parse(data));
+                  if(data == "No Feeds.") {
+                      alert("No feeds");
+                  }
+                  else {
+                    response = JSON.parse(data);
+                    //$('#displayTable').bootstrapTable();
+                    var $table = $('#displayTable');
+                    buildFeeds($table, response);
+                    // $('#displayTable').bootstrapTable("load", response);
+                  }
               },
-                cache: false,
-                type: "GET",
-                crossDomain: true,
-                success: function(data) {
-                    alert("hsgdhf"+JSON.parse(data));
-                    if(data == "No Feeds.") {
-                        alert("No feeds");
-                    }
-                    else {
-                      response = JSON.parse(data);
-                      //$('#displayTable').bootstrapTable();
-                      $('table').bootstrapTable({
-                        data: response,
-                        height: 350,
-                        columns: [
-                        {
-                          field: 'feedId',
-                          title: 'ID',
-                          radio:true
-                        }, {
-                          field: 'feedSubject',
-                          title: 'Subject',
-                        }, {
-                          field: 'feedAuthor',
-                          title: 'Author',
-                        }, {
-                          field: 'feedText',
-                          title: 'Text'
-                        } ]
-                      });
-                       //$('#displayTable').bootstrapTable("load", response);*/
-                    }
-                },
-                error: function(xhr) {
-                    alert(JSON.stringify(xhr));
-                }
-          });
-    });
+              error: function(xhr) {
+                  alert(JSON.stringify(xhr));
+              }
+        });
+      }
+
+    $(document).ready(function() {
+      $('body').on('click','.addMessage', function(event){
+        alert('message clicked'+$(this).data("feed"));
+
+        var feedId = $(this).data("feed");
+        $(".modal-body #feedIdMessage").val( feedId );
+
+        $('#modalMessageDetails').modal('show');
+      });
+      $('[data-toggle="tooltip"]').tooltip();
+
+      $("a#hood").click(function(event){
+				event.preventDefault();
+        ajaxCallFeeds("hood");
+      });
+      $("a#block").click(function(event){
+        event.preventDefault();
+        ajaxCallFeeds("block");
+      });
+      $("a#friend").click(function(event){
+        event.preventDefault();
+        ajaxCallFeeds("friend");
+      });
+      $("a#neighbour").click(function(event){
+        event.preventDefault();
+        ajaxCallFeeds("neighbour");
+      });
+      $("a#addFeed").click(function(event){
+        event.preventDefault();
+
+        $('#modalFeedDetails').modal('show');
+      });
+      jQuery('#modalFeedDetails')
+       .on('shown.bs.modal',
+            function(){
+              google.maps.event.trigger(document.getElementById('mapFeed'),'resize',{});
+              //document.getElementById('map').setCenter({lat: -34.397, lng: 150.644});
+           });
+      $('#saveFeed').click(function(event){
+          event.preventDefault();
+					feedSubject = $('#feedSubject').val();
+					feedText = $('#feedText').val();
+          receiver = $('input[name=receiver]').val();
+          feedLocation = $('input[name=feedLocation]').val();
+          category = document.getElementById("selectedCategory").options[document.getElementById("selectedCategory").selectedIndex].value;
+          dataToBeSent = {
+								"feedSubject" : feedSubject,
+								"feedText":feedText,
+                "location":feedLocation,
+                "category":category,
+                "receiver":receiver
+					};
+					setTimeout(insertFeed(dataToBeSent), 3000);
+					$('#modalFeedDetails').modal('hide');
+					$('#feedSubject').val("");
+					$('#feedText').val("");
+					$('input[name=receiver]').val("");
+          $('input[name=feedLocation]').val("");
+      });
+
+
+      jQuery('#modalMessageDetails')
+       .on('shown.bs.modal',
+            function(){
+              google.maps.event.trigger(document.getElementById('mapMessage'),'resize',{});
+              //document.getElementById('map').setCenter({lat: -34.397, lng: 150.644});
+           });
+      $('#saveMessage').click(function(event){
+          event.preventDefault();
+          alert("Save Message");
+
+					messageText = $('#messageText').val();
+          messageLocation = $('input[name=messageLocation]').val();
+          feedId = $(".modal-body #feedIdMessage").val();
+          alert("Feed Id"+$(".modal-body #feedIdMessage").val());
+          dataToBeSent = {
+								"feedId" : feedId,
+								"messageText":messageText,
+                "location":messageLocation,
+					};
+					setTimeout(insertMessage(dataToBeSent), 3000);
+					$('#modalMessageDetails').modal('hide');
+					$('#messageText').val("");
+          $('input[name=messageLocation]').val("");
+      });
+      function insertMessage(dataToBeSent) {
+      $.ajax({
+        url: "php/insertNewMessage.php",
+        data: dataToBeSent,
+        cache: false,
+        type: "POST",
+        async:false,
+        success: function(response) {
+            alert("Response");
+        },
+        error: function(xhr) {
+            alert(JSON.stringify(xhr));
+        }
+        });
+      }
+
+
   });
     </script>
 
@@ -224,12 +523,12 @@
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Contacts <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
-                            <li>
-                                <a href="#">Friends</a>
-                            </li>
-                            <li>
-                                <a href="#">Neighbours</a>
-                            </li>
+                          <li>
+                              <a href="/Padosi/friends.html">Friends</a>
+                          </li>
+                          <li>
+                              <a href="/Padosi/neighbours.html">Neighbours</a>
+                          </li>
                         </ul>
                     </li>
                 </ul>
@@ -259,23 +558,162 @@
                     <div class="container">
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-                                <li><a id="neighbourhoodTable" href="#">NeighbourhoodFeeds</a>
+                                <li><a id="hood">NeighbourhoodFeeds</a>
                                 </li>
-                                <li><a href="#block">Block Feeds</a>
+                                <li><a id="block">Block Feeds</a>
                                 </li>
-                                <li><a href="#friend">Friend Feeds</a>
+                                <li><a id="friend">Friend Feeds</a>
                                 </li>
-                                <li><a href="#neighbour">Neighbour Feeds</a>
+                                <li><a id="neighbour">Neighbour Feeds</a>
+                                </li>
+                                <li><a style="padding-top: 4px;padding-bottom: 4px;margin-top: 10px;" data-toggle="tooltip" data-placement="right" title="Add a new feed" class="btn btn-default" id="addFeed"><span class="glyphicon glyphicon-plus"></span></a>
                                 </li>
                             </ul>
                         </div>
                         <!--/.nav-collapse -->
                     </div>
                 </div>
-                <div>
-                  <table id="displayTable" class="col-md-2"></table>
+                <div id="display">
+                  <table id="displayTable"  class="col-md-2"></table>
                 </div>
 
+                <div class="modal fade" id="modalFeedDetails" tabindex="-1" role="dialog"
+              			 aria-labelledby="myModalLabel" aria-hidden="true">
+              			<div class="modal-dialog">
+              				<div class="modal-content">
+              					<!-- Modal Header -->
+              					<div class="modal-header">
+              						<button type="button" class="close"
+              						   data-dismiss="modal">
+              							   <span aria-hidden="true">&times;</span>
+              							   <span class="sr-only">Close</span>
+              						</button>
+              						<h4 class="modal-title" id="myModalLabel">
+              							<b>Feed details</b>
+              						</h4>
+              					</div>
+
+              					<!-- Modal Body -->
+              					<div class="modal-body">
+
+              						<form class="form-horizontal" action="#" role="form">
+
+                  						<div class="form-group">
+                  							<div class="col-md-9">
+                  								<input type="text" class="form-control" name="feedSubject" id="feedSubject"
+                  									placeholder="Enter subject of the feed">
+                  							</div>
+                  						</div>
+
+
+
+                              <div class="form-group">
+                  							<div class="col-md-9">
+                  								<textarea class="form-control" rows="5" id="feedText" name="feedText" placeholder="Enter the text of the feed"></textarea>
+                  							</div>
+                  						</div>
+
+                  						<div class="form-group">
+                  							<div class="col-md-9">
+                  								<input type="text" class="form-control" name="feedLocation"
+                  									placeholder="Enter location">
+                  							</div>
+                  						</div>
+
+                              <div class="maps" id="mapFeed"></div>
+
+                  						<div class="form-group">
+                  							<div class="col-md-9" id="category">
+                  								<select id="selectedCategory" name="category" class="form-control" onChange="categorySelect(this);">
+                  									<option selected>Category</option>
+                                    <option value='hood'>Hood</option>
+                                    <option value='block'>Block</option>
+                                    <option value='allFriend'>All Friends</option>
+                                    <option value='neighbour'>Neighbour</option>
+                                    <option value='friend'>Friend</option>
+                         					</select>
+                  							</div>
+                  						</div>
+
+                              <div class="form-group displayNone" id="receiverInputDisplay" >
+                  							<div class="col-md-9">
+                  								<input type="text" class="form-control" name="receiver"
+                  									placeholder="Enter the name of the receiver">
+                  							</div>
+                  						</div>
+
+
+
+              						</form>
+              					</div>
+
+              					<!-- Modal Footer -->
+              					<div class="modal-footer">
+              						<button type="button" class="btn btn-default"
+              								data-dismiss="modal" id="cancelFeed">
+              									Close
+              						</button>
+              						<button type="button" class="btn btn-primary" id="saveFeed">
+              							Add
+              						</button>
+              					</div>
+              				</div>
+              			</div>
+              		</div>
+
+                  <div class="modal fade" id="modalMessageDetails" tabindex="-1" role="dialog"
+                			 aria-labelledby="myModalLabel" aria-hidden="true">
+                			<div class="modal-dialog">
+                				<div class="modal-content">
+                					<!-- Modal Header -->
+                					<div class="modal-header">
+                						<button type="button" class="close"
+                						   data-dismiss="modal">
+                							   <span aria-hidden="true">&times;</span>
+                							   <span class="sr-only">Close</span>
+                						</button>
+                						<h4 class="modal-title" id="myModalLabel">
+                							<b>Message details</b>
+                						</h4>
+                					</div>
+
+                					<!-- Modal Body -->
+                					<div class="modal-body">
+
+                						<form class="form-horizontal" action="#" role="form">
+
+                    						<div class="form-group">
+                    							<div class="col-md-9">
+                    								<textarea class="form-control" rows="5" id="messageText" name="messageText" placeholder="Enter the message"></textarea>
+                                    <input id="feedIdMessage" class="displayNone" type="text"></input>
+                                  </div>
+                    						</div>
+
+                    						<div class="form-group">
+                    							<div class="col-md-9">
+                    								<input type="text" class="form-control" name="messageLocation"
+                    									placeholder="Enter location">
+                    							</div>
+                    						</div>
+
+                                <div class="maps" id="mapMessage"></div>
+
+                    					</form>
+                					</div>
+
+                					<!-- Modal Footer -->
+                					<div class="modal-footer">
+                						<button type="button" class="btn btn-default"
+                								data-dismiss="modal" id="cancelMessage">
+                									Close
+                						</button>
+                						<button type="button" class="btn btn-primary" id="saveMessage">
+                							Add
+                						</button>
+                					</div>
+                				</div>
+                			</div>
+                		</div>
 
             </div>
             <!-- /.container-fluid -->
@@ -287,11 +725,15 @@
     <!-- /#wrapper -->
 
     <!-- jQuery -->
+    <script>
+
+</script>
     <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
-
+    <script src="External/bootstrap-table.js"></script>
+    <script src="External/ga.js"></script>
     <!-- Morris Charts JavaScript -->
     <script src="js/plugins/morris/raphael.min.js"></script>
     <script src="js/plugins/morris/morris.min.js"></script>

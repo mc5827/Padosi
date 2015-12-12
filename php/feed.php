@@ -9,9 +9,9 @@ Logger::configure('..\config.xml');
 $log = Logger::getLogger('Padosi');
 
 //$user = $_GET["user"]; //pulls value of radio button
-//$typeOfFeed = $_GET["typeOfFeed"]; //pulls value of radio button
+$typeOfFeed = $_GET["typeOfFeed"]; //pulls value of radio button
 $user = "sanjitha";
-$typeOfFeed = "block";
+//$typeOfFeed = "block";
 $columns = array('feedId','feedSubject','feedAuthor','feedText');
 $action = 'unread';
 

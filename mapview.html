@@ -23,6 +23,16 @@
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+
+    <script src="External/jquery-1.11.3.min.js"></script>
+    <script src="External/jquery-1.11.3.js"></script>
+    <!--script src="External/bootstrap-table.min.js"></script-->
+		<script src="External/bootstrap-table.js"></script>
+    <link rel="stylesheet" href="External/bootstrap-table.css">
+    <link rel="stylesheet" href="External/bootstrap-table.min.css">
+
+  <script src="External/bootstrap.min.js"></script>
+  <script src="External/bootstrap.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -30,12 +40,19 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>
-      #map {
-        height: 40%;
-        width: 40%;
-        margin:20%;
+      #map  {
+        height: 400px;
+        width: 800px;
+        margin:2%;
+        background-color: #CCC;
       }
     </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEu5tkfIAZi8PEuY0udKP7cRhKe2csV0s&callback=initMap"
+            async defer></script>
+    <script src="External/jquery-1.11.3.min.js"></script>
+    <script src="External/jquery-1.11.3.js"></script>
+    <script src="js/maps.js"></script>
+
 </head>
 
 <body>
@@ -173,12 +190,12 @@
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Contacts <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
-                            <li>
-                                <a href="#">Friends</a>
-                            </li>
-                            <li>
-                                <a href="#">Neighbours</a>
-                            </li>
+                          <li>
+                              <a href="/Padosi/friends.html">Friends</a>
+                          </li>
+                          <li>
+                              <a href="/Padosi/neighbours.html">Neighbours</a>
+                          </li>
                         </ul>
                     </li>
                 </ul>
@@ -196,32 +213,36 @@
                         <h1 class="page-header">
                             MapView
                         </h1>
-                        <ol class="breadcrumb">
+                        <!--ol class="breadcrumb">
                             <li class="active">
                                 <i class="fa fa-dashboard"></i> MapView
                             </li>
-                        </ol>
+                        </ol-->
                     </div>
                 </div>
                 <!-- /.row -->
-                <div id="map"></div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-9">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-clock-o fa-fw"></i> Messages</h3>
+                                <h3 class="panel-title"><i class="fa fa-clock-o fa-fw"></i> Neighbourhood</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="list-group">
                                     <div id="map"></div>
                                 </div>
+                                <div class="form-group">
+                    							<div class="col-md-9" id="category">
+                    								<select id="selection" name="selection" onChange="initMap();">
+                                      <option value='hood' selected="selected">Hood</option>
+                                      <option value='block'>Block</option>
+                           					</select>
+                    							</div>
+                    						</div>
                             </div>
                         </div>
                     </div>
 
-                <script src="js/maps.js"></script>
-                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEu5tkfIAZi8PEuY0udKP7cRhKe2csV0s&callback=initMap"
-                    async defer></script>
                 <div id="info"></div>
 
 

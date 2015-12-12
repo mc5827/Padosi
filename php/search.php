@@ -13,15 +13,17 @@ $selected=array();
 
 
 //$user = $_GET["user"]; //pulls value of radio button
-//$feedId = $_GET["feedId"]; //pulls value of radio button
+//$feedId = $_GET["feedId"];
+//$keyword = $_GET["keyword"]; //pulls value of radio button
 $user = "mohit";
-$feedId = "1";
+$feedId = 1;
+$keyword = "mt1";
 $columns = array('messageId','feedId','messageAuthor','messageText','location','messageTime');
 
 
 $servername = 'localhost';
 $username = 'root';
-$password = '';
+$password = 'password';
 
 //session_start();
 //$_SESSION['username'] = $phoneNum;
@@ -42,8 +44,8 @@ try {
           $authorChangedLocation = $stmt->rowCount()>0;
           if($authorChangedLocation) {
               $log->info("Feedauthor changed location : true");
-              $stmt= $dbh->prepare('select * from messages,(select * from localityhistory where username=? and (block,hood) IN (select block,hood from feed join localityhistory on username = feedauthor where feedId=? and feedtime between locationStartTime and locationEndTime)) as T2 where feedid=? and messagetime between T2.locationStartTime and T2.locationEndTime;');
-              $stmt->execute(array($user,intval($feedId),intval($feedId)));
+              $stmt= $dbh->prepare('select * from messages,(select * from localityhistory where username=? and (block,hood) IN (select block,hood from feed join localityhistory on username = feedauthor where feedId=? and feedtime between locationStartTime and locationEndTime)) as T2 where feedid=? and messagetime between T2.locationStartTime and T2.locationEndTime and messageText like ?;');
+              $stmt->execute(array($user,intval($feedId),intval($feedId),"%$keyword%"));
               $isNotEmpty = $stmt->rowCount()>0;
               if($isNotEmpty) {
                 $results = $stmt->fetchAll();
@@ -57,14 +59,14 @@ try {
                 echo json_encode($data);
               }
               else {
-                $log->info("No messages from the old  feed ".$feedId);
-                echo "No messages";
+                $log->info("No messages from the old  feed "+feedId);
+                echo "No messages from the old feed "+feedId;
               }
           }
           else {
               $log->info("Feedauthor changed location : false");
-              $stmt= $dbh->prepare('select * from messages,(select * from localityhistory where username=? and (block,hood) IN (select block,hood from feed join registereduser on username = feedauthor where feedId=?)) as T2 where feedid=? and messagetime between T2.locationStartTime and T2.locationEndTime;');
-              $stmt->execute(array($user,intval($feedId),intval($feedId)));
+              $stmt= $dbh->prepare('select * from messages,(select * from localityhistory where username=? and (block,hood) IN (select block,hood from feed join registereduser on username = feedauthor where feedId=?)) as T2 where feedid=? and messagetime between T2.locationStartTime and T2.locationEndTime and messageText like ?;');
+              $stmt->execute(array($user,intval($feedId),intval($feedId),"%$keyword%"));
               $isNotEmpty = $stmt->rowCount()>0;
               if($isNotEmpty) {
                 $results = $stmt->fetchAll();
@@ -78,8 +80,8 @@ try {
                 echo json_encode($data);
               }
               else {
-                $log->info("No message for feed ".$feedId);
-                echo "No messages";
+                $log->info("No message for feed "+feedId);
+                echo "No message for feed "+feedId;
               }
           }
 
@@ -102,8 +104,8 @@ try {
           		echo json_encode($data);
           	}
           	else {
-          		$log->info("No message for feed".$feedId);
-          		echo "No messages";
+          		$log->info("No message for feed "+feedId);
+          		echo "No message for feed "+feedId;
           	}
       	}
 			$dbh = null;

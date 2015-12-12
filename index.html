@@ -29,10 +29,196 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="External/jquery-1.11.3.min.js"></script>
+    <script src="External/jquery-1.11.3.js"></script>
+    <!--script src="External/bootstrap-table.min.js"></script-->
+		<script src="External/bootstrap-table.js"></script>
+    <link rel="stylesheet" href="External/bootstrap-table.css">
+    <link rel="stylesheet" href="External/bootstrap-table.min.css">
+
+  <script src="External/bootstrap.min.js"></script>
+  <script src="External/bootstrap.js"></script>
+    <script language="javascript" type="text/javascript">
+
+    	function getFriendRequestCount(){
+    		var xhttp = new XMLHttpRequest();
+  		  xhttp.onreadystatechange = function() {
+  		    if (xhttp.readyState == 4 && xhttp.status == 200) {
+  		     document.getElementById("friendRequestCount").innerHTML = xhttp.responseText;
+  		    }
+  		  };
+  		  xhttp.open("GET", "php/countFriendRequest.php", true);
+  		  xhttp.send();
+
+    	}
+    	function getNewNeighbourCount(){
+    		var xhttp = new XMLHttpRequest();
+    		  xhttp.onreadystatechange = function() {
+    		    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    		     document.getElementById("neighbourRequestCount").innerHTML = xhttp.responseText;
+    		    }
+    		  };
+    		  xhttp.open("GET", "php/countNewNeighbourRequest.php", true);
+    		  xhttp.send();
+
+    		  getFriendRequestCount();
+    	}
+      function ajaxCallBlockRequests() {
+        $.ajax({
+              url: "php/getNewNeighbour.php",
+              cache: false,
+              type: "GET",
+              crossDomain: true,
+              success: function(data) {
+                    alert(JSON.parse(data));
+                    /*if(data == "No Feeds.") {
+                        alert("No feeds");
+                    }
+                    else {*/
+
+                    response = JSON.parse(data);
+                    var arrayLength = response.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        alert(response[i]);
+                        //Do something
+                        $('#modalBlockRequests .modal-body #displayBlockRequests tbody').append('<tr id="user'+(i)+'"></tr>');
+                        //div = '<div class="form-group"><div class="col-md-9"><label for="userName" class="col-md-3 control-label">UserName</label></div></div><button type="button" class="btn btn-warning"  id="cancel">Cancel</button><button type="button" class="btn btn-primary" id="accept">Accept</button>'
+                        $('#user'+i).append('<td><div class="form-group"><div class="col-md-9"><label for="userName" class="col-md-3 control-label">'+response[i]+'</label></div></div></td>');
+                        $('#user'+i).append('</td><button data-user="'+response[i]+'" type="button" class="btn btn-primary" id="blockAccept">Accept</button>');
+
+                        $('#user'+i).append('<td><button data-user="'+response[i]+'" type="button" class="btn btn-warning"  id="blockDecline">Cancel</button></td>');
+                    }
+                    //$("#modalBlockRequests .modal-body #table").val( feedId );
+
+                    $('#modalBlockRequests').modal('show');
+
+
+                },
+                error: function(xhr) {
+                    alert(JSON.stringify(xhr));
+                }
+          });
+        }
+        function ajaxCallAcceptBlockRequests(user) {
+          $.ajax({
+                url: "php/acceptBlockRequest.php",
+                cache: false,
+                type: "POST",
+                crossDomain: true,
+                data: {
+                  "requestingUserName": encodeURIComponent(user),
+                },
+                success: function(data) {
+                      alert(JSON.parse(data));
+                  },
+                  error: function(xhr) {
+                      alert(JSON.stringify(xhr));
+                  }
+            });
+          }
+          function ajaxCallFriendRequests() {
+            $.ajax({
+                  url: "php/getNewFriendRequest.php",
+                  cache: false,
+                  type: "GET",
+                  crossDomain: true,
+                  success: function(data) {
+                        alert(JSON.parse(data));
+                        response = JSON.parse(data);
+                        var arrayLength = response.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            alert(response[i]);
+                            //Do something
+                            $('#modalFriendRequests .modal-body #displayFriendRequests tbody').append('<tr id="user'+(i)+'"></tr>');
+                            //div = '<div class="form-group"><div class="col-md-9"><label for="userName" class="col-md-3 control-label">UserName</label></div></div><button type="button" class="btn btn-warning"  id="cancel">Cancel</button><button type="button" class="btn btn-primary" id="accept">Accept</button>'
+                            $('#user'+i).append('<td><div class="form-group"><div class="col-md-9"><label for="userName" class="col-md-3 control-label">'+response[i]+'</label></div></div></td>');
+                            $('#user'+i).append('</td><button data-user="'+response[i]+'" type="button" class="btn btn-primary" id="friendAccept">Accept</button>');
+
+                            $('#user'+i).append('<td><button data-user="'+response[i]+'" type="button" class="btn btn-warning"  id="friendDecline">Cancel</button></td>');
+                        }
+                        //$("#modalBlockRequests .modal-body #table").val( feedId );
+
+                        $('#modalFriendRequests').modal('show');
+
+
+                    },
+                    error: function(xhr) {
+                        alert(JSON.stringify(xhr));
+                    }
+              });
+            }
+            function ajaxCallAcceptFriendRequests(user) {
+              $.ajax({
+                    url: "php/acceptFriendRequest.php",
+                    cache: false,
+                    type: "POST",
+                    crossDomain: true,
+                    data: {
+                      "senderUsername": encodeURIComponent(user),
+                    },
+                    success: function(data) {
+                          alert(JSON.parse(data));
+                      },
+                      error: function(xhr) {
+                          alert(JSON.stringify(xhr));
+                      }
+                });
+              }
+              function ajaxCallDeclineFriendRequests(user) {
+                $.ajax({
+                      url: "php/declineFriendRequest.php",
+                      cache: false,
+                      type: "POST",
+                      crossDomain: true,
+                      data: {
+                        "senderUsername": encodeURIComponent(user),
+                      },
+                      success: function(data) {
+                            alert(JSON.parse(data));
+                        },
+                        error: function(xhr) {
+                            alert(JSON.stringify(xhr));
+                        }
+                  });
+                }
+      $(document).ready(function() {
+        $("a#blockRequests").click(function(event){
+          alert('Neighbours requests');
+          ajaxCallBlockRequests();
+        });
+        $("a#friendRequests").click(function(event){
+          alert('Friend requests');
+          ajaxCallFriendRequests();
+        });
+        $('body').on('click','#blockDecline', function(event){
+          alert('Block Decline clicked'+$(this).data("user"));
+
+        });
+        $('body').on('click','#blockAccept', function(event){
+          alert('Block accept clicked'+$(this).data("user"));
+          ajaxCallAcceptBlockRequests($(this).data("user"));
+
+
+        });
+        $('body').on('click','#friendDecline', function(event){
+          alert('Decline friend clicked'+$(this).data("user"));
+          ajaxCallDeclineFriendRequests($(this).data("user"));
+
+        });
+        $('body').on('click','#friendAccept', function(event){
+          alert('Friend accept clicked'+$(this).data("user"));
+          ajaxCallAcceptFriendRequests($(this).data("user"));
+
+
+        });
+
+      });
+
+    </script>
 
 </head>
 
-<body>
+<body onload="getNewNeighbourCount()">
 
     <div id="wrapper">
 
@@ -168,10 +354,10 @@
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Contacts <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
                             <li>
-                                <a href="#">Friends</a>
+                                <a href="/Padosi/friends.html">Friends</a>
                             </li>
                             <li>
-                                <a href="#">Neighbours</a>
+                                <a href="/Padosi/neighbours.html">Neighbours</a>
                             </li>
                         </ul>
                     </li>
@@ -209,12 +395,13 @@
                                         <i class="fa fa-comments fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">26</div>
-                                        <div>New Comments!</div>
+                                        <div>Neighbour Requests</div>
+                                        <div class="huge" id='neighbourRequestCount'></div>
+
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a id="blockRequests">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -224,19 +411,20 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
-                                        <i class="fa fa-tasks fa-5x"></i>
+                                        <i class="fa fa-comments fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">12</div>
-                                        <div>New Tasks!</div>
+                                        <div>Friend Requests</div>
+                                        <div class="huge" id='friendRequestCount'></div>
+
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a id="friendRequests">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -246,8 +434,9 @@
                         </div>
                     </div>
 
-
                 </div>
+
+
                 <!-- /.row -->
 
 
@@ -376,6 +565,118 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
+                <div class="modal fade" id="modalBlockRequests" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                          <button type="button" class="close"
+                             data-dismiss="modal">
+                               <span aria-hidden="true">&times;</span>
+                               <span class="sr-only">Close</span>
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">
+                            <b>Pending Block Requests</b>
+                          </h4>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+
+                          <form class="form-horizontal" action="#" role="form">
+                              <div class="col-md-12 column">
+                          			<table id="displayBlockRequests" class="table table-bordered table-hover">
+                                  <thead>
+                          					<tr >
+                          						<th class="text-center">
+                          							Name
+                          						</th>
+                          						<th class="text-center">
+
+                          						</th>
+                          						<th class="text-center">
+
+                          						</th>
+                          					</tr>
+                          				</thead>
+                          				<tbody>
+
+                          				</tbody>
+                          			</table>
+                              </div>
+
+
+                            </form>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default"
+                              data-dismiss="modal" id="cancelMessage">
+                                Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="modalFriendRequests" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <button type="button" class="close"
+                               data-dismiss="modal">
+                                 <span aria-hidden="true">&times;</span>
+                                 <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                              <b>Pending Friend Requests</b>
+                            </h4>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+
+                            <form class="form-horizontal" action="#" role="form">
+                                <div class="col-md-12 column">
+                            			<table id="displayFriendRequests" class="table table-bordered table-hover">
+                                                          <thead>
+                            					<tr >
+                            						<th class="text-center">
+                            							Name
+                            						</th>
+                            						<th class="text-center">
+
+                            						</th>
+                            						<th class="text-center">
+
+                            						</th>
+                            					</tr>
+                            				</thead>
+                            				<tbody>
+
+                            				</tbody>
+                            			</table>
+                                </div>
+
+
+                              </form>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default"
+                                data-dismiss="modal" id="cancelMessage">
+                                  Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
             </div>
             <!-- /.container-fluid -->
